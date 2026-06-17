@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>短视频社交媒体传播效果数据</title>
+    <style>
+        /* ---------- 全局样式 ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f0f7ff;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* ---------- 头部 ---------- */
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+            padding: 28px 20px 22px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+        .header h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+        .header h1 span {
+            font-weight: 300;
+            opacity: 0.85;
+        }
+        .header .sub {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 14px;
+            margin-top: 6px;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---------- 主容器 ---------- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px 40px;
+        }
+
+        /* ---------- 工具栏 ---------- */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 16px 24px;
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.08);
+            margin-bottom: 24px;
+            border: 1px solid #e2edff;
+        }
+        .toolbar .search-wrap {
+            display: flex;
+            align-items: center;
+            flex: 1 1 320px;
+            max-width: 540px;
+            position: relative;
+        }
+        .toolbar .search-wrap .icon {
+            position: absolute;
+            left: 14px;
+            color: #94a3b8;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .toolbar .search-wrap input {
+            width: 100%;
+            padding: 10px 16px 10px 44px;
+            border: 2px solid #dbeafe;
+            border-radius: 40px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.25s;
+            background: #f8fbff;
+            color: #1e293b;
+        }
+        .toolbar .search-wrap input:focus {
+            border-color: #2563eb;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+        .toolbar .search-wrap input::placeholder {
+            color: #94a3b8;
+        }
+        .toolbar .search-wrap .clear-btn {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            padding: 4px 6px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .toolbar .search-wrap .clear-btn:hover {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .toolbar .search-wrap .clear-btn.visible {
+            display: block;
+        }
+        .toolbar .stats {
+            font-size: 14px;
+            color: #475569;
+            background: #eff6ff;
+            padding: 6px 18px;
+            border-radius: 40px;
+            white-space: nowrap;
+            border: 1px solid #dbeafe;
+            margin-left: 16px;
+        }
+        .toolbar .stats strong {
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        /* ---------- 表格容器 ---------- */
+        .table-wrap {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.08);
+            border: 1px solid #e2edff;
+            overflow: hidden;
+        }
+        .table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 2px 2px 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 900px; /* 增加列数后适当调整 */
+        }
+
+        table thead {
+            background: #eff6ff;
+            border-bottom: 2px solid #bfdbfe;
+        }
+        table thead th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e40af;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            background: #eff6ff;
+            z-index: 2;
+        }
+        table thead th:first-child {
+            border-radius: 0;
+        }
+        table tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+        table tbody tr:hover {
+            background: #f8fbff;
+        }
+        table tbody tr:last-child {
+            border-bottom: none;
+        }
+        table tbody td {
+            padding: 12px 16px;
+            vertical-align: middle;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+        /* 序号列 */
+        table tbody td:first-child {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 13px;
+            text-align: center;
+            width: 50px;
+        }
+        /* 主题列 */
+        table tbody td:nth-child(2) {
+            font-weight: 500;
+            color: #1e40af;
+            white-space: nowrap;
+        }
+        /* 标题列 */
+        table tbody td:nth-child(3) {
+            min-width: 180px;
+            max-width: 300px;
+            word-break: break-word;
+        }
+        /* 平台列 */
+        table tbody td:nth-child(4) {
+            white-space: nowrap;
+        }
+        /* 播放量列 */
+        table tbody td:nth-child(5) {
+            font-weight: 500;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+        /* 点赞、评论列 */
+        table tbody td:nth-child(6),
+        table tbody td:nth-child(7) {
+            text-align: center;
+            font-weight: 500;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+        /* 转发列 */
+        table tbody td:nth-child(8) {
+            text-align: center;
+            font-weight: 500;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+        /* 效果列 */
+        table tbody td:nth-child(9) {
+            max-width: 280px;
+            word-break: break-word;
+            color: #334155;
+        }
+
+        /* 空值占位 */
+        .empty-val {
+            color: #b9c7da;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* 标签样式 - 平台 */
+        .platform-tag {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .platform-tag.weibo {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .platform-tag.douyin {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+        .platform-tag.kuaishou {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .platform-tag.bilibili {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        /* 效果列中的高亮文字（数字高亮） */
+        .effect-highlight {
+            color: #2563eb;
+            font-weight: 500;
+        }
+
+        /* ---------- 空状态 ---------- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        .empty-state .big-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .empty-state p {
+            font-size: 16px;
+        }
+
+        /* ---------- 响应式 ---------- */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            .header .sub {
+                font-size: 12px;
+            }
+            .container {
+                padding: 16px 12px 32px;
+            }
+            .toolbar {
+                padding: 14px 16px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .toolbar .search-wrap {
+                max-width: 100%;
+                flex: 1 1 auto;
+            }
+            .toolbar .stats {
+                margin-left: 0;
+                text-align: center;
+                align-self: center;
+                font-size: 13px;
+            }
+            table {
+                font-size: 13px;
+                min-width: 780px;
+            }
+            table thead th,
+            table tbody td {
+                padding: 10px 12px;
+            }
+            table tbody td:nth-child(3) {
+                min-width: 140px;
+                max-width: 200px;
+            }
+            table tbody td:nth-child(9) {
+                max-width: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 19px;
+            }
+            table {
+                font-size: 12px;
+                min-width: 680px;
+            }
+            table thead th,
+            table tbody td {
+                padding: 8px 10px;
+            }
+            .toolbar .search-wrap input {
+                font-size: 14px;
+                padding: 8px 12px 8px 38px;
+            }
+            .platform-tag {
+                font-size: 10px;
+                padding: 1px 8px;
+            }
+        }
+
+        /* ---------- 滚动条美化 ---------- */
+        .table-scroll::-webkit-scrollbar {
+            height: 6px;
+            background: #eef2f6;
+            border-radius: 4px;
+        }
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #bfdbfe;
+            border-radius: 4px;
+        }
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: #93b4f0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== 头部 ========== -->
+    <header class="header">
+        <h1>短视频社交媒体 <span>传播效果数据</span></h1>
+        
+    </header>
+
+    <!-- ========== 主体 ========== -->
+    <div class="container">
+
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="search-wrap">
+                <span class="icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="搜索主题、标题关键词…" autocomplete="off" />
+                <button class="clear-btn" id="clearBtn" aria-label="清空搜索">✕</button>
+            </div>
+            <div class="stats" id="statsInfo">共 <strong id="totalCount">0</strong> 条记录</div>
+        </div>
+
+        <!-- 表格 -->
+        <div class="table-wrap">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>主题</th>
+                            <th>标题 / 话题</th>
+                            <th>平台</th>
+                            <th>播放量</th>
+                            <th>点赞</th>
+                            <th>评论</th>
+                            <th>转发</th>
+                            <th>效果</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- 由 JavaScript 渲染 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ================================================================
+        //  1. 数据
+        // ================================================================
+        const rawData = [{
+            id: 1,
+            theme: '中国航天日',
+            title: '【#这句誓言他们用一生去践行#】',
+            platform: '微博',
+            views: '2.2万次',
+            likes: '172',
+            comments: '39',
+            effect: '45'
+        }, {
+            id: 2,
+            theme: '愚人节',
+            title: '【这版雪山救狐，你猜来的又是谁？】',
+            platform: '微博',
+            views: '',
+            likes: '121',
+            comments: '8',
+            effect: '22'
+        }, {
+            id: 3,
+            theme: '母亲节',
+            title: '《妈妈的手机》',
+            platform: '抖音',
+            views: '1万',
+            likes: '791',
+            comments: '11',
+            effect: '6'
+        }, {
+            id: 4,
+            theme: '母亲节',
+            title: '《妈妈的手机》',
+            platform: '快手',
+            views: '2.9万',
+            likes: '794',
+            comments: '55',
+            effect: ''
+        }, {
+            id: 5,
+            theme: '儿童节',
+            title: '《今天，被小时候的记忆暴击了》',
+            platform: '微博',
+            views: '',
+            likes: '43',
+            comments: '18',
+            effect: '21 登上百家号热搜榜单第四，小红书热搜推荐，在抖音'
+        }, {
+            id: 6,
+            theme: '儿童节',
+            title: '《今天，被小时候的记忆暴击了》',
+            platform: '抖音',
+            views: '15.2万',
+            likes: '4409',
+            comments: '141',
+            effect: '594'
+        }, {
+            id: 7,
+            theme: '高考',
+            title: '在中国，我们不说高考加油，我们说',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 8,
+            theme: '世界杯',
+            title: '《当领导让足球小白做世界杯选题》',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 9,
+            theme: '世界杯',
+            title: '《球场上为什么有球童》',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 10,
+            theme: '世界杯',
+            title: '《传奇谢幕vs新星闪耀》',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 11,
+            theme: '世界杯',
+            title: '《球员出场为啥总要牵着球童》',
+            platform: 'B站',
+            views: '1.5万',
+            likes: '609',
+            comments: '33',
+            effect: '8'
+        }, {
+            id: 12,
+            theme: '我在高校等你来',
+            title: '交大',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 13,
+            theme: '我在高校等你来',
+            title: '清华',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 14,
+            theme: '我在高校等你来',
+            title: '国防科大',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 15,
+            theme: '我在高校等你来',
+            title: '中央民族大学',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 16,
+            theme: '高考',
+            title: '《"等高考结束"这句话你说过多少遍》',
+            platform: 'B站',
+            views: '1.6万',
+            likes: '3285',
+            comments: '145',
+            effect: '18 登上抖音热榜第51位'
+        }, {
+            id: 17,
+            theme: '',
+            title: '【#社交一定要刻意表演吗#？】',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 18,
+            theme: '',
+            title: '【#选不对人生就废了吗#？】',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: ''
+        }, {
+            id: 19,
+            theme: '',
+            title: '新华网对话脱不花：【当你感到迷茫焦虑时，不妨听听这段话】',
+            platform: '',
+            views: '',
+            likes: '',
+            comments: '',
+            effect: '登上抖音热榜第51位'
+        }];
+
+        // ================================================================
+        //  2. 工具函数
+        // ================================================================
+        function isEmpty(val) {
+            return val === undefined || val === null || val === '';
+        }
+
+        function emptyPlaceholder(val) {
+            return isEmpty(val) ? '<span class="empty-val">—</span>' : val;
+        }
+
+        // 平台标签样式
+        function getPlatformTag(platform) {
+            if (!platform) return emptyPlaceholder('');
+            const lower = platform.toLowerCase();
+            let cls = 'platform-tag';
+            if (lower.includes('微博') || lower.includes('weibo')) cls += ' weibo';
+            else if (lower.includes('抖音') || lower.includes('douyin')) cls += ' douyin';
+            else if (lower.includes('快手') || lower.includes('kuaishou')) cls += ' kuaishou';
+            else if (lower.includes('b站') || lower.includes('bilibili')) cls += ' bilibili';
+            return `<span class="${cls}">${platform}</span>`;
+        }
+
+        // 拆分转发数和效果描述
+        function splitForwardAndEffect(effectStr) {
+            if (isEmpty(effectStr)) {
+                return { forward: '', effectDesc: '' };
+            }
+            const str = String(effectStr).trim();
+            // 尝试匹配开头的数字（可能带逗号，但这里都是纯数字）
+            const match = str.match(/^(\d+)\s*(.*)$/);
+            if (match) {
+                const forward = match[1];
+                let desc = match[2] ? match[2].trim() : '';
+                return { forward, effectDesc: desc };
+            } else {
+                // 没有数字开头，全部视为效果描述
+                return { forward: '', effectDesc: str };
+            }
+        }
+
+        // 效果列中的数字高亮（保留原有效果高亮逻辑，但这里效果描述可能包含数字，我们可以保留高亮）
+        function formatEffectDesc(val) {
+            if (isEmpty(val)) return emptyPlaceholder('');
+            const str = String(val);
+            // 匹配数字（包括逗号分隔的）
+            const parts = str.split(/(\d+[,.]?\d*)/g);
+            let result = '';
+            for (let i = 0; i < parts.length; i++) {
+                if (i % 2 === 1) {
+                    // 数字部分
+                    result += `<span class="effect-highlight">${parts[i]}</span>`;
+                } else {
+                    result += parts[i];
+                }
+            }
+            return result;
+        }
+
+        // ================================================================
+        //  3. 渲染
+        // ================================================================
+        const tbody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const totalCount = document.getElementById('totalCount');
+
+        let currentData = [...rawData];
+
+        function render(data) {
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                <div class="big-icon">🔎</div>
+                                <p>没有找到匹配的记录，试试其他关键词吧</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                totalCount.textContent = '0';
+                return;
+            }
+
+            let html = '';
+            data.forEach((item, index) => {
+                const realIndex = index + 1;
+                const { forward, effectDesc } = splitForwardAndEffect(item.effect);
+                html += `
+                    <tr>
+                        <td>${realIndex}</td>
+                        <td>${emptyPlaceholder(item.theme)}</td>
+                        <td>${emptyPlaceholder(item.title)}</td>
+                        <td>${getPlatformTag(item.platform)}</td>
+                        <td>${emptyPlaceholder(item.views)}</td>
+                        <td>${emptyPlaceholder(item.likes)}</td>
+                        <td>${emptyPlaceholder(item.comments)}</td>
+                        <td>${emptyPlaceholder(forward)}</td>
+                        <td>${formatEffectDesc(effectDesc)}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            totalCount.textContent = data.length;
+        }
+
+        // ================================================================
+        //  4. 搜索逻辑
+        // ================================================================
+        function filterData(keyword) {
+            const trimmed = keyword.trim();
+            if (!trimmed) {
+                currentData = [...rawData];
+            } else {
+                const lower = trimmed.toLowerCase();
+                currentData = rawData.filter(item => {
+                    const theme = (item.theme || '').toLowerCase();
+                    const title = (item.title || '').toLowerCase();
+                    const platform = (item.platform || '').toLowerCase();
+                    return theme.includes(lower) || title.includes(lower) || platform.includes(lower);
+                });
+            }
+            render(currentData);
+            // 控制清空按钮显隐
+            if (trimmed) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+            }
+        }
+
+        // ================================================================
+        //  5. 事件绑定
+        // ================================================================
+        searchInput.addEventListener('input', function(e) {
+            filterData(this.value);
+        });
+
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterData('');
+            searchInput.focus();
+        });
+
+        // 按 Escape 清空搜索
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                filterData('');
+                this.blur();
+            }
+        });
+
+        // ================================================================
+        //  6. 初始化
+        // ================================================================
+        render(rawData);
+        totalCount.textContent = rawData.length;
+    </script>
+
+</body>
+</html>
